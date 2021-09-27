@@ -1,58 +1,58 @@
 ## Exercício 2 - Kubernetes
-1. Máquina 1
+1. Atividade 1 - múltiplos nginx
 
-	- [x] Instalar uma máquina Linux (escolham a distribuição que mais agrada)
-		* Ubuntu Desktop-current foi instalada em VM do VirtualBox chamada `machine1`
-	- [x] Instalar e configurar o apache para rodar na porta 8070
-		*  `$ sudo apt-get install apache2`
-		* Editar `/etc/apache2/apache2.conf` com o diretório desejado (`/u01/apache/www/`) baseado no `/var/www/`
-		* Editar `/etc/apache2/ports.conf` e adicionar a porta 8070 no Listen
-		* Editar `/etc/apache2/sites-enabled/000-default.conf` para o VirtualHost na porta 8070 e adicionar uma nova DocumentRoot para o diretório desejado (`/u01/apache/www/`)
-	- [x] Instalar e configurar o php
-		* `$ sudo apt-get install php libapache2-mod-php`
-		* Adicionar o módulo do php no Apache
-			* `$ a2enmod php7.4`
-	- [x] Adicionar um disco (500MB) a essa máquina e montar a partição no diretório `/u01` – partição em ext4
-		* Adicionar um novo disco virtual pelo VirtualBox de 500MB
-		* Executar os comandos como root
-			* ```sh
-			  sudo fdisk -l
-			  fdisk /dev/sdb
-			  g
-			  w
-			  fdisk /dev/sdb
-			  n
-			  default
-			  default
-			  default
-			  y
-			  w
-			  sudo mkfs .ext4 /dev/sdb1
-				```
-	- [x] Criar os diretórios `/u01/apache/www/imagens`
-		* `$ sudo mkdir -p /u01/apache/www/imagens`
-	- [x] Quando a máquina reiniciar, esse diretório precisa continuar aparecendo como montado
-		* Para manter a partição montada automaticamente, devemos primeiramente montar a partição
-			* `$ sudo mount -t ext4 auto /dev/sdb1 /u01`
-		* Depois, editar o arquivo `/etc/fstab` e adicionar o UUID da partição criada (`/dev/sdb1`), para descobrir o UUID, utilizamos o comando `$ blkid`
-			* ```sh
-			  sudo blkid | grep sdb1
-			  echo 'UUID=29d3da92-0680-4212-a2d7-2443c5e87d73 /u01 ext4 defaults 0 0' | sudo tee -a /etc/fstab
-				```
-	- [x] Criar uma página html `index.html` que tenha um link para outra página chamada `infos_php.php`
-		* Adicionar a página `index.html` no diretório `/u01/apache/www`
-	- [x] Colocar a imagem do logo da Compasso UOL como conteúdo da página `index.html` junto com o link. A imagem precisa estar localizada no diretório criado anteriormente. Exemplo: `/u01/apache/www/imagens/logo_compasso.jpg`
-		* Adicionar link para a imagem no `/u01/apache/www/index.html`
-	- [x] Criar a página `infos_php.php` e dentro dela trazer o resultado da função `phpinfo()`
-		* Adicionar o arquivo `infos_php.php` no diretório `/u01/apache/www/`
+	- [x] Crie um namespace chamado `labnginx`
+		* Namespace criado pelo arquivo `labnginx-namespace.yaml`
+		* `$ kubectl apply -f labnginx-namespace.yaml`
+	- [x] Faça o apply de dois pods nginx neste namespace, dentro de um único ingress, onde o Load balancer distribuirá a carga entre estes dois pods
+		*  Deployment dos pods através de réplica e do serviço pelo arquivo `labnginx-deployment.yaml`
+		* `$ kubectl apply -f labnginx-deployment.yaml`
+		*  Deployment do ingress habilitando previamente no Minikube com o comando `$ minikube addons enable ingress` e posteriormente pelo arquivo `labnginx-ingress.yaml`
+		* `$ kubectl apply -f labnginx-ingress.yaml`
+	- [x] Abra o browser e faça o teste no seu navegador se a tela padrão do nginx abrirá para você
+		* Êxito na exibição da tela padrão do nginx através do link [http://labnginx.teste](http://labnginx.teste) onde se foi mapeado o endereço do Node no arquivo `/etc/hosts`, onde no exemplo realizado tem-se:
+			* `192.168.39.29 labnginx.teste`
+	- [x] Faça um describe dos pods Nginx criados por você. Qual o IP que foi estabelecido para cada pod?
+		* IP varia conforme a exclusão e criação dos pods. No exemplo realizado têm-se:
+		* `$ kubectl describe pods nginx-585449566-67bsx`
+			* Resultado: `nginx-585449566-67bsx 172.17.0.3`
+		* `$ kubectl describe pods nginx-585449566-fbrt5`
+			* Resultado: `nginx-585449566-fbrt5 172.17.0.2`
+	- [x] Verifique logs dos dois pods Nginx criados por você, que informações são mostradas?
+		* Primeiramente, pode-se verificar os logs com a flag `--follow`para visualizar cada entrada nova de registro no log. Ao fazer isso nos dois pods e realizar uma consulta ao endereço do ingress, obtêm-se registros de log conforme distribuição de carga round robin
+			* `$ kubectl logs nginx-585449566-67bsx --follow`
+			* `$ kubectl logs nginx-585449566-fbrt5 --follow`
 
-1. Máquina 2
+1. Atividade 2 - wordpress no k8s
 
-	- [x] Instalar uma máquina Linux (escolham a distribuição que mais agrada)
-		* Ubuntu Desktop-current instalada em VM do VirtualBox chamada `machine2`
-	- [x] Instalar e configurar o NGiNX para rodar na porta 8090 e criar uma página html
-		* `$ sudo apt-get install nginx`
-		* Edita o arquivo `/etc/nginx/sites-enabled/`default como root
-		* Adiciona a porta, diretório e arquivos index por ordem de prioridade de acordo com o template do próprio arquivo
-	- [x] `index.html` que tenha um link para a página criada no exercício anterior (Máquina 1)
-		* Cria arquivo index no diretório `/var/www/html/` com o link para o IP da Máquina 1
+	- [x] Crie um namespace chamado `labwordpress`, tudo o que for feito deverá estar dentro deste namespace
+		* Namespace criado pelo arquivo `labwordpress-namespace.yaml`
+		* `$ kubectl apply -f labwordpress-namespace.yaml`
+	- [x] Faça o apply do arquivo de service do MySQL mude a porta padrão do banco MySQL para 3308
+		* Serviço criado dentro do deployment `labwordpress-mysql-deployment.yaml` tendo o nome de `wordpress-mysql-service` utilizando a porta 3308
+	- [x] Crie o arquivo secret que deverá conter o password do banco MySQL, lembre-se de criar uma senha com fortes padrões de segurança
+		* Secret criado pelo arquivo `labwordpress-mysql-secret.yaml` contendo senha de grande segurança  `1ReallyHardPassword*` e codificada em Base64
+		* `$ kubectl apply -f labwordpress-mysql-secret.yaml`
+	- [x] Faça o apply do arquivo de PersistentVolumeClaim do MySQL para um capacity de 3GB
+		* PersistentVolumeClaim criado dentro do deployment `labwordpress-mysql-deployment.yaml` tendo o nome de `mysql-pvclaim` utilizando 3 GiB
+	- [x] Faça o apply do arquivo de deployment do MySQL, crie também um volume mount no deployment do MySQL chamado `mysql-persistent-storage-lab`, apontando para `/var/lib/mysql`. Lembre-se de criar o volume em si com o mesmo nome do volume mount
+		* Deployment realizado com o nome de `wordpress-mysql` junto do mount e do caminho
+		* `$ kubectl apply -f labwordpress-mysql-deployment.yaml`
+	- [x] Faça o apply do arquivo de service do Wordpress altere para a TCP Port 80
+		* Serviço criado dentro do deployment `labwordpress-deployment.yaml` tendo o nome de `wordpress-service` utilizando a porta 80
+	- [x] Faça o apply do arquivo de PersistentVolumeClaim do Wordpress, para um capacity de 3GB
+		* PersistentVolumeClaim criado dentro do deployment `labwordpress-deployment.yaml` tendo o nome de `wordpress-pvclaim` utilizando 3 GiB
+	- [x] No arquivo de deployment do Wordpress, crie um volume mount no deployment do Wordpress chamado `wordpress-persistent-storage-lab`, apontando para `/var/www/html`. Lembre-se de criar o volume em si com o mesmo nome do volume mount
+		* Deployment realizado com o nome de `wordpress` junto do mount e do caminho
+	- [x] No arquivo de deployment do wordpress, insira o secret contendo o password do MySQL, criado no começo do exercício
+		* Inserido através de `spec.containers.env.valueFrom.secretKeyRef`
+	- [x] Faça o apply do arquivo de deployment do wordpress
+		* `$ kubectl apply -f labwordpress-deployment.yaml`
+	- [x] Verifque se os pods, os services e os pvcs foram criados da forma correta dentro namespace criado no início deste exercício
+		* `$ kubectl -n labwordpress get all`
+		* `$ kubectl -n labwordpress get pvc`
+	- [x] Verifique qual foi a URI gerada através do ingress do Kubernetes
+		* Utilizado um host específico no endereço [http://labwordpress.teste](http://labwordpress.teste) mapeado com endereço do Node no arquivo `/etc/hosts`, onde no exemplo realizado tem-se:
+			* `192.168.39.29 labwordpress.teste`
+	- [x] Copie essa URI do Ingress e cole no browser para abrir a tela inicial do wordpress
+		* Ẽxito em mostrar tela inicial de instalação do Wordpress
