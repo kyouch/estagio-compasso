@@ -54,7 +54,10 @@ spec:
               name: mysql-secret
               key: password
         - name: MYSQL_DATABASE
-          value: wordpress
+          valueFrom:
+            configMapKeyRef:
+              name: labwordpress-configmap
+              key: database-name
         volumeMounts:
         - name: mysql-persistent-storage-lab
           mountPath: /var/lib/mysql

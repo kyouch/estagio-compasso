@@ -13,13 +13,13 @@ Here we will be publishing and versioning all the challenges, tasks and learning
 Tree
 ----
 
-#### Lesson 1 - Linux
+#### Lesson 1 - Linux [README.md](https://github.com/kyouch/estagio-compasso/tree/main/Exerc%C3%ADcio%201)
   * Task 1
     * Install a VM1 using a *Unix distribution and configure Apache and PHP with dedicated partition mounted since boot
   * Task 2
     * Install a VM2 using a *Unix distribution and configure NGiNX to access VM1
 
-#### Lesson 2 - Kubernetes
+#### Lesson 2 - Kubernetes [README.md](https://github.com/kyouch/estagio-compasso/tree/main/Exerc%C3%ADcio%202)
   * Task 1
     * Deploy NGiNX and namespace with oad balancer provided by Ingress
   * Task 2

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: labwordpress
+  name: labwordpress-configmap
+data:
+  database-host: wordpress-mysql-service
+  database-user: root
+  database-name: wordpress
