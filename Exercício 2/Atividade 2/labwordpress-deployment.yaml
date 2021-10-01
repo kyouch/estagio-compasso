@@ -14,7 +14,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: labwordpress
+  namespace: labwordpress
   name: wordpress-pvclaim
   labels:
     app: wordpress
