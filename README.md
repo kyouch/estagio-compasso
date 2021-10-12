@@ -8,10 +8,10 @@ Hello!
 
 We are students from IFGoiano and Unipampa where we will be studying and applying our knowledge in Cloud & DevSecOps.
 
-Here we will be publishing and versioning all the challenges, tasks and learnings during the scholarship and internship program at Compasso UOL.
+Here we will be publishing and versioning all the challenges, tasks and learnings done during the scholarship and internship program at Compasso UOL.
 
-Tree
-----
+File Tree
+---------
 
 #### Lesson 1 - Linux [README.md](https://github.com/kyouch/estagio-compasso/tree/main/Exerc%C3%ADcio%201)
   * Task 1
@@ -21,9 +21,9 @@ Tree
 
 #### Lesson 2 - Kubernetes [README.md](https://github.com/kyouch/estagio-compasso/tree/main/Exerc%C3%ADcio%202)
   * Task 1
-    * Deploy NGiNX and namespace with oad balancer provided by Ingress
+    * Deploy NGiNX and Namespace with load balancer provided by Ingress
   * Task 2
-    * Deploy Wordpress with MySQL database, with namespace and Persistent Volume Claims, Secrets while load balancer is provided by Ingress
+    * Deploy Wordpress with MySQL database, using Namespace, Persistent Volume Claims, ConfigMap and Secret while external access is provided by Ingress
 
 Team 7
 ------
